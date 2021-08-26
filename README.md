@@ -6,7 +6,7 @@ SketchLattice @ICCV21
 
 ## dataset
 
-dataset is available in directory `fast_data_dT_0.5_rebuttal_iccv`
+dataset is available in the directory `fast_data_dT_0.5_rebuttal_iccv`
 
 ## training 
 
