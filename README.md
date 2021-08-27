@@ -6,7 +6,7 @@ SketchLattice @ICCV21
 
 ## dataset
 
-dataset is available is available <a href="https://drive.google.com/file/d/1fAbDodKgpRYHBcKisvF-M8dxbaEaSclh/view?usp=sharing" target="_blank">here<a>.
+dataset `fast_data_dT_0.5_rebuttal_iccv` is available is available <a href="https://drive.google.com/file/d/1fAbDodKgpRYHBcKisvF-M8dxbaEaSclh/view?usp=sharing" target="_blank">here<a>.
 
 ## training 
 
