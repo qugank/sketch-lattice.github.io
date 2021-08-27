@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>SketchLattice: Latticed Representation for Sketch Manipulation</title>
+    <link rel="stylesheet" href="w3.css">
+</head>
+
+<body>
+
+    <br />
+    <br />
+
+    <div class="w3-container">
+        <div class="w3-content" style="max-width:1080px">
+            <div class="w3-content w3-center" style="max-width:1000px">
+                <h2 id="title"><b>SketchLattice: Latticed Representation for Sketch Manipulation</b></h2>
+                <p>
+                    <a href="https://qugank.github.io/" target="_blank">Yonggang Qi</a>
+                    <sup>1*</sup>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a target="_blank">Guoyao Su</a><sup>1*</sup>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a target="_blank">Pinaki Nath Chowdhury</a><sup>2</sup>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a target="_blank">Mingkang Li</a><sup>1</sup>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a target="_blank">Yi-Zhe Song</a><sup>2</sup>
+                </p>
+                <p>
+                    <sup>1</sup>Beijing University of Posts and Telecommunications, CN
+                    &nbsp; &nbsp; &nbsp;
+                    <sup>2</sup>SketchX, CVSSP, University of Surrey, UK
+                </p>
+                <p><b>ICCV 2021</b></p>
+                <div class="w3-content w3-center" style="max-width:850px">
+                    <div style="max-width:850px; display:inline-block">
+                    <a href="https://arxiv.org/abs/2108.11636" target="_blank" style="color:#007bff">
+                            <img src="SketchLattice.png" alt="front" style="width:50px"/>
+                            <div style="margin:10px 0"></div>
+                            <b>arXiv</b></a>
+                    </div>
+                    &emsp;&emsp;&emsp;&emsp;&emsp;
+                    <div style="max-width:850px; display:inline-block">
+                    <a href="https://drive.google.com/file/d/1fAbDodKgpRYHBcKisvF-M8dxbaEaSclh/view?usp=sharing" target="_blank" style="color:#007bff">
+                            <img src="database.svg" alt="front" style="width:50px"/>
+                            <div style="margin:10px 0"></div>
+                            <b>Dataset</b></a>
+                    </div>
+                    &emsp;&emsp;&emsp;&emsp;&emsp;
+                    <div style="max-width:850px; display:inline-block">
+                    <a href="https://github.com/qugank/sketch-lattice" target="_blank" style="color:#007bff">
+                            <img src="github.png" alt="front" style="width:50px"/>
+                            <div style="margin:10px 0"></div>
+                            <b>Code</b></a>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+            <div class="w3-content w3-center" style="max-width:850px">
+                <img src="front.png" alt="front" style="width:580px"/>
+                <p class="w3-left-align">Figure 1. (a) Given lattice points sampled on input sketches (Left),
+                    our proposed Lattice-GCN-LSTM network can recreatea corresponding vector sketch (Right).
+                    (b) Given a corrupted sketch, the resulting lattice points are used to reconstruct a similar sketch accordingly.
+                    (c) The abstraction level of generated sketches is controllable by varying the density of latticed points.
+                    (d) Image-to-sketch synthesis by dropping a few lattice points along the edge of  an object.
+                </p>
+            </div>
+            <br>
+            <h3 class="w3-left-align" id="introduction"><b>Introduction</b></h3>
+            <p>
+                The key challenge in designing a sketch representation lies with handling the abstract and iconic nature of
+                sketches. Existing work predominantly utilizes either , (i) a pixelative format that treats sketches as natural
+                images employing off-the-shelf CNN-based networks, or (ii) an elaborately designed vector format that leverages
+                the structural  information of drawing orders using sequential RNN-based methods. While the pixelative format
+                lacks intuitive exploitation of structural cues, sketches in vector format are absent in most cases limiting
+                their practical usage. Hence, in this paper , we propose a lattice structured sketch representation that not
+                only removes the bottleneck of requiring vector data but also preserves the structural cues that vector data
+                provides. Essentially, sketch lattice is a set of points sampled from the pixelative format of the sketch using
+                a lattice graph. We show that our lattice structure is particularly amenable to structural changes that largely
+                benefits sketch abstraction modeling for generation tasks. Our lattice representation could be effectively
+                encoded using a graph model, that uses significantly fewer model parameters (13.5 times lesser) than existing
+                state-of-the-art. Extensive experiments demonstrate the effectiveness of sketch lattice for sketch manipulation,
+                including sketch healing and image-to-sketch synthesis.
+            </p>
+
+
+            <h3 class="w3-left-align"><b>Our Solution</b></h3>
+            <div class="w3-content w3-center" style="max-width:1000px">
+                <img src="network.png" alt="network" style="width:1000px" />
+                <p>
+                    Figure 2. Framework overview.
+<!--                    The encoder takes test question embedding, positional encoding and context embedding as inputs,-->
+<!--                     where context embedding is given by a context encoder, providing clues about the implied law in an example PQA pair, and the positional encoding adapts to the 2D case. -->
+<!--                    The decoder can generate an answer-grid by predicting all symbols at every location in parallel.-->
+                </p>
+            </div>
+
+            <p>
+                As shown in Figure 2, a schematic representation of Lattice-GCN-LSTM architecture.
+                An input sketch image or the edge map of an image object is given to our lattice graph to sample lattice points.
+                All overlapping points between the dark pixel in sketch map and uniformly spread lines in lattice graph are sampled.
+                Given the lattice points, we construct a graph using proximity principles. A graph model is used to encode SketchLattice
+                into a latent vector. Finally, a generative LSTM decoder recreates a vector sketch which resembles the original sketch image.
+            </p>
+
+            <h3 class="w3-left-align" id="results"><b>Experiments and Results</b></h3>
+            <h4 class="w3-left-align" id="healing"><b> Sketch Healing</b></h4>
+            <p>
+                The task of sketch healing was proposed akin to vector sketch synthesis. Specifically, given a partial
+                sketch drawing, the objective is to recreate a sketch which can best resemble the partial sketch.
+            </p>
+            <div class="w3-content w3-center" style="max-width:1000px">
+                <img src="result_1.png" alt="result_1" style="width:960px" />
+                <p>
+                    Figure 3. Qualitative results.
+                </p>
+            </div>
+            <p>
+                Exemplary results of generated sketch from SketchLattice under different corruption level of mask probability
+                P<sub>mask</sub> in Quick-Draw dataset. With an increase of P<sub>mask</sub>, the generated sketch becomes more
+                abstract. For P<sub>mask</sub> ≤ 30% we observe satisfactory generated sketches, but for P<sub>mask</sub> = 50%,
+                the generated new sketches are struggle to faithfully recover the original sketch.
+            </p>
+            <div class="w3-content w3-center" style="max-width:800px">
+                <table class="w3-bordered w3-border">
+                    <tr>
+                        <th>Method</th>
+                        <th>VF</th>
+                        <th>VC</th>
+                        <th>#Params</th>
+                        <th>P<sub>mask</sub></th>
+                        <th>Acc</th>
+                        <th>Top-1</th>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">SR</td>
+                        <td rowspan="2">√</td>
+                        <td rowspan="2">×</td>
+                        <td rowspan="2">0.67M</td>
+                        <td>10%</td>
+                        <td>25.08%</td>
+                        <td>50.65%</td>
+                    </tr>
+                    <tr>
+                        <td>30%</td>
+                        <td>3.44%</td>
+                        <td>43.48%</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">Sp2s</td>
+                        <td rowspan="2">×</td>
+                        <td rowspan="2">√</td>
+                        <td rowspan="2">1.36M</td>
+                        <td>10%</td>
+                        <td>24.26%</td>
+                        <td>45.20%</td>
+                    </tr>
+                    <tr>
+                        <td>30%</td>
+                        <td>10.54%</td>
+                        <td>27.66%</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">SH</td>
+                        <td rowspan="2">√</td>
+                        <td rowspan="2">√</td>
+                        <td rowspan="2">1.10M</td>
+                        <td>10%</td>
+                        <td>50.78%</td>
+                        <td>85.74%</td>
+                    </tr>
+                    <tr>
+                        <td>30%</td>
+                        <td>43.26%</td>
+                        <td>85.47%</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">SH-VC</td>
+                        <td rowspan="2">×</td>
+                        <td rowspan="2">√</td>
+                        <td rowspan="2">1.10M</td>
+                        <td>10%</td>
+                        <td>-</td>
+                        <td>58.48%</td>
+                    </tr>
+                    <tr>
+                        <td>30%</td>
+                        <td>-</td>
+                        <td>50.87%</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2">Ours</td>
+                        <td rowspan="2">×</td>
+                        <td rowspan="2">×</td>
+                        <td rowspan="2">0.08M</td>
+                        <td>10%</td>
+                        <td>55.50%</td>
+                        <td>76.02%</td>
+                    </tr>
+                    <tr>
+                        <td>30%</td>
+                        <td>54.79%</td>
+                        <td>73.71%</td>
+                    </tr>
+
+                </table>
+                <p>Table 1. Quantitative results</p>
+            </div>
+
+            <p>
+                We can observe from Table1that our approach outperforms other baseline methods on recognition accuracy,
+                suggesting that the healed sketches obtained from ours are more likely to be recognized as objects in the
+                correct categories. Importantly, we can also observe that, unlike other competitors which are very sensitive
+                to the corruption level, ours can maintain a stable recognition accuracy even when P<sub>mask</sub> increases up to 30%.
+            </p>
+
+            <h4 class="w3-left-align" id="synthesis"><b>Image-to-Sketch Synthesis</b></h4>
+            <p>Our Lattice-GCN-LSTM network can be applied to image-to-sketch translation. Once trained, for any input image,
+                we can obtain some representative lattice points based on the corresponding edges and lattice graph.</p>
+            <div class="w3-content w3-center" style="max-width:850px">
+                <img src="result_2.png" alt="result_2" style="width:500px" />
+                <p> Figure 4. Image-to-sketch synthesis examples. </p>
+            </div>
+            <p>
+                As shown in Figure 4,
+                (a) The original photos from Shoes-V2 dataset.
+                (b) The lattice points on edge of the photo shoes.
+                (c) Sketches generated by our model.
+                (d) The points introduced by human referred to the photos.
+                (e) Sketches given by our model using lattice points shown in (d).
+                (f) Sketches generated by LS-SCC for comparison.
+                (g) Human drawn sketches according to the photos.
+            </p>
+
+            <h4 class="w3-left-align" id="Bib"><b>Bibtex</b></h4>
+            
+            If this <a href="https://github.com/qugank/PQA" target="__blank">work</a> is useful for you, please cite it:
+            <div class="w3-code">
+                @inproceedings{yonggang202sketchlattice,<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;title={SketchLattice: Latticed Representation for Sketch Manipulation},<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;author={Yonggang Qi, Guoyao Su, Pinaki Nath Chowdhury, Mingkang Li, Yi-Zhe Song},<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;booktitle={ICCV},<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;year={2021}<br>
+                }
+            </div>
+        </div>
+
+        <hr/>  
+        <div class="w3-content w3-center w3-opacity" style="max-width:850px"> <p style="font-size: xx-small;color: grey;">Proudly created by Kai Zhang @ BUPT <br> 2021.3 </p> </div>
+
+    </div>
+
+</body>
+
+</html>
