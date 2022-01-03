@@ -8,7 +8,7 @@ This is the official implementation (PyTorch) of SketchLattice: Latticed Represe
 
 ## dataset
 
-dataset `fast_data_dT_0.5_rebuttal_iccv` is available is available <a href="https://drive.google.com/file/d/1fAbDodKgpRYHBcKisvF-M8dxbaEaSclh/view?usp=sharing" target="_blank">here<a>.
+dataset `fast_data_dT_0.5_rebuttal_iccv` is available <a href="https://drive.google.com/file/d/1fAbDodKgpRYHBcKisvF-M8dxbaEaSclh/view?usp=sharing" target="_blank">here<a>.
 
 ## training 
 
