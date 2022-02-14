@@ -12,14 +12,25 @@ We used the <a href="https://github.com/googlecreativelab/quickdraw-dataset#sket
   
 Some `.npz` examples in `./dataset` directory are available.
 
+## sketch to Graph and Adj
+
+Before training and testing, you should run `python sketch2GraphAndAdjScript.py` for preprocessing datasets.
+  
+Edit outPath, split_nums, node_nums and mode(train/test) before script.
+  
+After script, you can find `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
+  
 ## training 
 
-1. edit `generation_hyper_params.py`, setting `self.data_location` and `self.save_path`
+1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
 
-2. running `python generation_sketch_gcn.py` for training
+2. running `python generation_sketch_gcn.py` for training.
 
-3. running `python generation_inference.py` for validating
+## testing
   
+1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
+  
+2. running `python generation_inference.py` for validating.
   
 Bibtex: 
 
