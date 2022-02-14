@@ -16,9 +16,9 @@ Some `.npz` examples are available in `./dataset` directory.
 
 Before training and testing, you should run `python -u sketch2GraphAndAdjScript.py` for preprocessing datasets.
   
-· Before script, you should edit `outPath`, `split_nums`, `node_nums` and `mode(train/test)`.
+* Before script, you should edit `outPath`, `split_nums`, `node_nums` and `mode(train/test)`.
   
-· After script, you can find `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
+* After script, you can find `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
   
 ## training 
 
@@ -27,6 +27,8 @@ Before training and testing, you should run `python -u sketch2GraphAndAdjScript.
 2. running `python -u generation_sketch_gcn.py` for training.
 
 ## testing
+
+The pre-trained models(encoder & decoder) and the corresponding parameters are available in `./models_32_150`.
   
 1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
   
