@@ -445,5 +445,5 @@ if __name__ == "__main__":
     print(hp.mask_prob, hp.temperature)
 
     """look at this function for more inference details."""
-    model.validate(sketch_dataset, save_middle_path=f"./{hp.save_path}/result_dT_0.5/visualize/{hp.mask_prob}")
+    model.validate(sketch_dataset, save_middle_path=f"./results/{hp.save_path}/visualize/{hp.mask_prob}")
     exit(0)
