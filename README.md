@@ -7,8 +7,10 @@ This is the official implementation (PyTorch) of SketchLattice: Latticed Represe
 # Training Manual
 
 ## dataset
-
-dataset `fast_data_dT_0.5_rebuttal_iccv` is available <a href="https://drive.google.com/file/d/1fAbDodKgpRYHBcKisvF-M8dxbaEaSclh/view?usp=sharing" target="_blank">here<a>.
+  
+We used the <a href="https://github.com/googlecreativelab/quickdraw-dataset#sketch-rnn-quickdraw-dataset" target="_blank">QuickDraw Dataset<a>, which can be downloaded as per-class `.npz` files from <a href="https://console.cloud.google.com/storage/browser/quickdraw_dataset/sketchrnn" target="_blank">Google Cloud<a>.
+  
+Some `.npz` examples in `./dataset` directory are available.
 
 ## training 
 
