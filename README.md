@@ -34,7 +34,8 @@ The pre-trained models(encoder & decoder) and the corresponding parameters are a
   
 2. running `python -u generation_inference.py` for validating.
   
-Bibtex: 
+## Bibtex: 
+If you have some inspirations for your work, we would appreciate your quoting our paper.
 
     @inproceedings{yonggang2021sketchlattice,
         title={SketchLattice: Latticed Representation for Sketch Manipulation},
