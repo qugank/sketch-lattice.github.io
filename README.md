@@ -10,27 +10,27 @@ This is the official implementation (PyTorch) of SketchLattice: Latticed Represe
   
 We used the <a href="https://github.com/googlecreativelab/quickdraw-dataset#sketch-rnn-quickdraw-dataset" target="_blank">QuickDraw Dataset<a>, which can be downloaded as per-class `.npz` files from <a href="https://console.cloud.google.com/storage/browser/quickdraw_dataset/sketchrnn" target="_blank">Google Cloud<a>.
   
-Some `.npz` examples in `./dataset` directory are available.
+Some `.npz` examples are available in `./dataset` directory.
 
 ## sketch to Graph and Adj
 
-Before training and testing, you should run `python sketch2GraphAndAdjScript.py` for preprocessing datasets.
+Before training and testing, you should run `python -u sketch2GraphAndAdjScript.py` for preprocessing datasets.
   
-Edit outPath, split_nums, node_nums and mode(train/test) before script.
+· Before script, you should edit `outPath`, `split_nums`, `node_nums` and `mode(train/test)`.
   
-After script, you can find `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
+· After script, you can find `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
   
 ## training 
 
 1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
 
-2. running `python generation_sketch_gcn.py` for training.
+2. running `python -u generation_sketch_gcn.py` for training.
 
 ## testing
   
 1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
   
-2. running `python generation_inference.py` for validating.
+2. running `python -u generation_inference.py` for validating.
   
 Bibtex: 
 
