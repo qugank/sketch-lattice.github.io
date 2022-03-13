@@ -7,19 +7,35 @@ This is the official implementation (PyTorch) of SketchLattice: Latticed Represe
 # Training Manual
 
 ## dataset
+  
+We used the <a href="https://github.com/googlecreativelab/quickdraw-dataset#sketch-rnn-quickdraw-dataset" target="_blank">QuickDraw Dataset<a>, which can be downloaded as per-class `.npz` files from <a href="https://console.cloud.google.com/storage/browser/quickdraw_dataset/sketchrnn" target="_blank">Google Cloud<a>.
+  
+Some `.npz` examples are available in `./dataset` directory.
 
-dataset `fast_data_dT_0.5_rebuttal_iccv` is available <a href="https://drive.google.com/file/d/1fAbDodKgpRYHBcKisvF-M8dxbaEaSclh/view?usp=sharing" target="_blank">here<a>.
+## sketch to Graph and Adj
 
+Before training and testing, you should run `python -u sketch2GraphAndAdjScript.py` for preprocessing datasets.
+  
+* Before script, you should edit `outPath`, `split_nums`, `node_nums` and `mode(train/test)`.
+  
+* After script, you can find `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
+  
 ## training 
 
-1. edit `generation_hyper_params.py`, setting `self.data_location` and `self.save_path`
+1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
 
-2. running `python generation_sketch_gcn.py` for training
+2. running `python -u generation_sketch_gcn.py` for training.
 
-3. running `python generation_inference.py` for validating
+## testing
+
+The pre-trained models(encoder & decoder) and the corresponding parameters are available in `./models_32_150`.
   
+1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
   
-Bibtex: 
+2. running `python -u generation_inference.py` for validating.
+  
+## Bibtex: 
+If you have some inspirations for your work, we would appreciate your quoting our paper.
 
     @inproceedings{yonggang2021sketchlattice,
         title={SketchLattice: Latticed Representation for Sketch Manipulation},
