@@ -22,7 +22,7 @@ class HParams:
         self.R = 0.99995
         self.KL_min = 0.2
         self.wKL = 0.5
-        self.lr = 0.0003
+        self.lr = 0.001
         self.lr_decay = 0.99999
         self.min_lr = 0.00003
 
