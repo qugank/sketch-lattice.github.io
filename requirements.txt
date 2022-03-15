@@ -1,0 +1,14 @@
+graphviz==0.19.1
+interval==1.0.0
+ipdb==0.13.9
+ipython==8.1.1
+matplotlib==3.2.2
+numpy==1.19.1
+opencv_python==4.5.2.52
+Pillow==9.0.1
+rdp==0.8
+scikit_learn==1.0.2
+svgwrite==1.4.1
+torch==1.6.0
+torchvision==0.7.0
+tqdm==4.62.3
