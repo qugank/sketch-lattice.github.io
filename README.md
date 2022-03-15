@@ -7,12 +7,6 @@ This is the official implementation (PyTorch) of SketchLattice: Latticed Represe
 
 <img src="./docs/front.png" width="600px"></img>
 
-## Install
-
-```bash
-$ pip install -r requirements.txt
-```
-
 ## Datasets and Preprocessing
 
 ### dataset
