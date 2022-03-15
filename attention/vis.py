@@ -58,17 +58,5 @@ def make_dot(var, params):
 inputs = torch.randn(100, 50)
 adj = torch.randn(100, 100)
 model = models.SpGAT(50, 8, 7, 0.5, 0.01, 3)
-"""
-def __init__(self,
-             nfeat: Any,
-             nhid: {__mul__},
-             nclass: Any,
-             dropout: Any,
-             alpha: Any,
-             nheads: Any) -> None
-"""
-model = model
 y = model(inputs, adj)
 print(y, y.shape)
-# g = make_dot(y, model.state_dict())
-# g.view()

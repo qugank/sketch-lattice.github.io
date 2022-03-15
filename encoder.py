@@ -49,12 +49,12 @@ class FeatureExtraction(nn.Module):
         :return:
         """
         if inputs.shape[0] != 1:
-            tmp_batch = 1  # 分割份数
+            tmp_batch = 1
             tmp_result = []
             inputs = inputs.view(tmp_batch, -1, 1, self.graph_size, self.graph_size)
             for i in range(tmp_batch):
                 tmp_result.append(self.featureGenerator(inputs[i]))
-            result = torch.cat(tmp_result).view(-1, self.graph_num, 512)  # (batch, 30, 1000)
+            result = torch.cat(tmp_result).view(-1, self.graph_num, 512)
         else:
             result = self.featureGenerator(inputs.view(-1, 1, self.graph_size, self.graph_size)
                                            ).view(-1, self.graph_num, 512)
@@ -69,10 +69,10 @@ class CoordinateEmbedding(nn.Module):
         self.out_dim = out_dim
         self.emb = nn.Embedding(words_number, out_dim // 2, padding_idx=0)
 
-    def forward(self, x: torch.Tensor):  # (B, S, 2)
+    def forward(self, x: torch.Tensor):
         x = x.long()
         x = self.emb(x)
-        x = x.view(-1, hp.graph_number, self.out_dim).contiguous()  # (B, S, out_dim)
+        x = x.view(-1, hp.graph_number, self.out_dim).contiguous()
         return x
 
 
@@ -84,13 +84,13 @@ class CoordinateEmbeddingXYSep(nn.Module):
         self.embX = nn.Embedding(words_number, out_dim // 2, padding_idx=0)
         self.embY = nn.Embedding(words_number, out_dim // 2, padding_idx=0)
 
-    def forward(self, c: torch.Tensor):  # (B, S, 2)
+    def forward(self, c: torch.Tensor):
         c = c.long()
         x, y = torch.split(c, 1, dim=2)
         x_emb = self.embX(x.squeeze(2))
         y_emb = self.embY(y.squeeze(2))
         c = torch.cat([x_emb, y_emb], dim=2)
-        c = c.view(-1, hp.graph_number, self.out_dim).contiguous()  # (B, S, out_dim)
+        c = c.view(-1, hp.graph_number, self.out_dim).contiguous()
         return c
 
 
@@ -129,10 +129,9 @@ class GCNPropagation2(nn.Module):
             self.I = self.I.cuda()
 
     def normalize(self, A: np.ndarray, symmetric=True):
-        # A = A+I  # 原来A中, diag为0
+        # A = A+I
         A += self.I
-        # 所有节点的度
-        d = A.sum(axis=2)  # 每一行相加  # 会在同一个device上创建
+        d = A.sum(axis=2)
         if symmetric:
             # D = D^-1/2
             D = torch.diag_embed(torch.pow(d, -0.5))
@@ -148,12 +147,8 @@ class GCNPropagation2(nn.Module):
         :param A: (batch, graph_num, graph_num)
         :return:
         """
-        # A = self.normalize(A, True)
         A = A + self.I
         return self.fc(torch.matmul(A, X))
-        # X = self.relu(self.fc1(torch.matmul(A, X)))
-        # X = self.relu(self.fc2(torch.matmul(A, X)))
-        # return self.fc3(torch.matmul(A, X))
 
 
 class GCNPropagation(nn.Module):
@@ -189,10 +184,9 @@ class GCNPropagation(nn.Module):
         :param symmetric:
         :return:
         """
-        # A = A+I  # 原来A中, diag为0
+        # A = A+I
         A += self.I
-        # 所有节点的度
-        d = A.sum(axis=2)  # 每一行相加  # 会在同一个device上创建
+        d = A.sum(axis=2)
         if symmetric:
             # D = D^-1/2
             D = torch.diag_embed(torch.pow(d, -0.5))
@@ -208,7 +202,6 @@ class GCNPropagation(nn.Module):
         :param A: (batch, graph_num, graph_num)
         :return:
         """
-        # A = self.normalize(A, True)
         A = A + self.I
 
         for block in self.resBlockSequence:
@@ -218,16 +211,14 @@ class GCNPropagation(nn.Module):
             X = X + last
 
         return X
-        # return self.out_linear(X)
 
 
 class EncoderGCN(nn.Module):
     def __init__(self, ):
         super(EncoderGCN, self).__init__()
         # model
-        """注意此处用的是什么Embedding模式"""
         self.emb = CoordinateEmbeddingXYSep(hp.words_number, hp.embedding_dim)
-        # self.emb = CoordinateEmbedding(hp.words_number, hp.embedding_dim)
+
         self.gcn = GCNPropagation(hp.embedding_dim, hp.gcn_out_dim)
 
         self.fc_h2z = nn.Linear(hp.gcn_out_dim, hp.Nz)
@@ -248,8 +239,6 @@ class EncoderGCN(nn.Module):
         X = torch.sum(X, dim=1)  # (B, S, dims)
         X = self.norm1(X)
         X = torch.tanh(X)
-
-        # X = self.fc_h2z(X)  # not have in SketchHealer
 
         # generate mu sigma
         mu = self.fc_mu(X)
@@ -272,7 +261,6 @@ class EncoderPatchGCN(nn.Module):
         super(EncoderPatchGCN, self).__init__()
         # model
         self.emb = FeatureExtraction(hp.graph_number, 128)
-        # self.emb = CoordinateEmbedding(hp.words_number, hp.embedding_dim)
         self.gcn = GCNPropagation(512, hp.gcn_out_dim)
 
         self.fc_h2z = nn.Linear(hp.gcn_out_dim, hp.Nz)
@@ -293,8 +281,6 @@ class EncoderPatchGCN(nn.Module):
         X = torch.sum(X, dim=1)  # (B, S, dims)
         X = self.norm1(X)
         X = torch.tanh(X)
-
-        # X = self.fc_h2z(X)  # not have in SketchHealer
 
         # generate mu sigma
         mu = self.fc_mu(X)
@@ -322,21 +308,3 @@ class SPAttention(nn.Module):
 
     def forward(self, x):  # (B, S, f_dims)
         pass
-
-
-if __name__ == '__main__':
-    print("""Encoder GCN""")
-    batch_size = 64
-    EGCN = EncoderGCN()
-
-    A = torch.randn((batch_size, hp.graph_number, hp.graph_number))
-    A -= A.min()  # A must be a positive number.
-    C = torch.randn((batch_size, hp.graph_number, 2))
-    C -= C.min()
-    C /= C.max()
-    C *= hp.words_number - 1
-    print(C)
-    print(A)
-    z, mu, sigma = EGCN(C, A)
-    z: torch.Tensor
-    print(z, z.shape)

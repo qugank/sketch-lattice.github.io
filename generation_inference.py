@@ -68,7 +68,6 @@ class SketchesDataset:
         self.mask_list = list(range(hp.graph_number))
 
     def max_size(self, sketches):
-        """返回所有sketch中 转折最多的一个sketch"""
         sizes = [len(sketch) for sketch in sketches]
         return max(sizes)
 
@@ -104,10 +103,9 @@ class SketchesDataset:
 
         batch_idx = np.random.choice(self.legal_sketch_list, batch_size)
         batch_sketches = [self.sketches_normed[idx] for idx in batch_idx]
-        batch_sketches_graphs = [self.sketches[idx] for idx in batch_idx]
         sketches = []
         lengths = []
-        graphs = []  # (batch_size * graphs_num_constant, x, y)
+        graphs = []
         adjs = []
         index = 0
 
@@ -138,13 +136,13 @@ class SketchesDataset:
             tmp_adj = self.tmp_adjs[i] / 100.
             adjs.append(tmp_adj)
 
-        batch = torch.from_numpy(np.stack(sketches, 1)).float()  # (Nmax, batch_size, 5)
+        batch = torch.from_numpy(np.stack(sketches, 1)).float()
         graphs = torch.from_numpy(np.stack(graphs, 0)).float()
         adjs = torch.from_numpy(np.stack(adjs, 0)).float()
 
         if hp.use_cuda:
-            batch = batch.cuda()  # (Nmax, batch_size, 5)
-            graphs = graphs.cuda()  # (batch_size, len, 5)
+            batch = batch.cuda()
+            graphs = graphs.cuda()
             adjs = adjs.cuda()
 
         return batch, lengths, graphs, adjs
@@ -155,10 +153,9 @@ class SketchesDataset:
         """
         batch_idx = [sketch_index]
         batch_sketches = [self.sketches_normed[idx] for idx in batch_idx]
-        batch_sketches_graphs = [self.sketches[idx] for idx in batch_idx]
         sketches = []
         lengths = []
-        graphs = []  # (batch_size * graphs_num_constant, x, y) # 注意按照 graphs num 切分
+        graphs = []
         adjs = []
         index = 0
         for _sketch in batch_sketches:
@@ -189,12 +186,12 @@ class SketchesDataset:
             adjs.append(tmp_adj)
 
         if hp.use_cuda:
-            batch = torch.from_numpy(np.stack(sketches, 1)).cuda().float()  # (Nmax, batch_size, 5)
-            graphs = torch.from_numpy(np.stack(graphs, 0)).cuda().float()  # (batch_size, len, 5)
+            batch = torch.from_numpy(np.stack(sketches, 1)).cuda().float()
+            graphs = torch.from_numpy(np.stack(graphs, 0)).cuda().float()
             adjs = torch.from_numpy(np.stack(adjs, 0)).cuda().float()
 
         else:
-            batch = torch.from_numpy(np.stack(sketches, 1)).float()  # (Nmax, batch_size, 5)
+            batch = torch.from_numpy(np.stack(sketches, 1)).float()
             graphs = torch.from_numpy(np.stack(graphs, 0)).float()
             adjs = torch.from_numpy(np.stack(adjs, 0)).float()
 
@@ -206,14 +203,6 @@ def make_coordinate_graph(sketch: np.ndarray, mask_prob: float):
     result_points, A = get_node_coordinates_graph(canvas, 8, 8,
                                                   maxPointFilled=hp.graph_number,
                                                   mask_prob=mask_prob, max_pixel_value=hp.words_number - 1)
-    # import cv2
-    # result_points = result_points.astype("int16")
-    # for p in result_points:
-    #     if p[0] == p[1] == 0:
-    #         continue
-    #     cv2.line(canvas, tuple(p), tuple(p), color=(0, 255, 0), thickness=5)
-    # cv2.imwrite("test.jpg", canvas)
-    # exit(0)
     return result_points, A
 
 
@@ -287,8 +276,6 @@ class Model:
             self.conditional_generation(sketch_dataset, save_middle_path)
 
     def conditional_generation(self, sketch_dataset, save_middle_path="visualize"):
-        # category_flag = 0
-        # category_name = sketch_dataset.category[category_flag].split(".")[0]
         category_count = sketch_dataset.numbers
         result_z_list = []
 
@@ -328,7 +315,6 @@ class Model:
                     seq_y.append(dy)
                     seq_z.append(pen_down)
                     if eos:
-                        # print(i)
                         break
 
                 # # visualize result:
@@ -431,6 +417,8 @@ if __name__ == "__main__":
     import random
 
     hp.resume_epoch = 60000
+    hp.mask_prob = 0.1
+    hp.temperature = 0.1
 
     sketch_dataset = SketchesDataset(hp.data_location, hp.category, "test")
     hp.Nmax = sketch_dataset.Nmax
@@ -440,8 +428,7 @@ if __name__ == "__main__":
 
     print(hp.resume_epoch, hp.mask_prob, hp.Nmax)
     """you can specific your mask_prob and temperature"""
-    hp.mask_prob = 0.1
-    hp.temperature = 0.1
+
     print(hp.mask_prob, hp.temperature)
 
     """look at this function for more inference details."""

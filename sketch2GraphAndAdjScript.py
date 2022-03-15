@@ -5,11 +5,16 @@ import numpy as np
 import os
 from tqdm import tqdm
 
-# split_nums, node_nums = [int(x) for x in outPath.replace("/", "").split("_")[-2:]]
+data_location = './dataset'
 outPath = "./dataset_32_150"
+# split_nums, node_nums = [int(x) for x in outPath.replace("/", "").split("_")[-2:]]
 split_nums = 32
 node_nums = 150
 mode = "train"
+data_list = [
+    "airplane.npz", "angel.npz", "apple.npz", "butterfly.npz", "bus.npz",
+    "cake.npz", "fish.npz", "spider.npz", "The Great Wall of China.npz", "umbrella.npz"
+]  # 10
 
 def make_coordinate_graph(sketch: np.ndarray, mask_prob: float, dThreshold: float = 0.2):
     canvas = draw_three(sketch, img_size=256)
@@ -39,12 +44,6 @@ if __name__ == '__main__':
     import shutil
 
     os.makedirs(f"./{outPath}", exist_ok=True)
-    data_location = './dataset'
-
-    data_list = [
-        "airplane.npz",
-        "angel.npz",
-    ] # test 2
 
     for each in data_list:
         print(each)

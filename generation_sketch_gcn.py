@@ -59,7 +59,6 @@ class SketchesDataset:
 
         print(f"length of trainSet: {len(tmp_sketches)}")
         self.legal_sketch_list = list(range(len(tmp_sketches)))
-        # self.legal_sketch_list = []
         self.legal_sketch_list = self.purify(tmp_sketches)  # data clean.  # remove toolong and too stort sketches.
         print("legal data number: ", len(self.legal_sketch_list))
         self.sketches = tmp_sketches.copy()
@@ -69,7 +68,6 @@ class SketchesDataset:
         self.mask_list = list(range(hp.graph_number))
 
     def max_size(self, sketches):
-        """返回所有sketch中 转折最多的一个sketch"""
         sizes = [len(sketch) for sketch in sketches]
         return max(sizes)
 
@@ -105,7 +103,6 @@ class SketchesDataset:
 
         batch_idx = np.random.choice(self.legal_sketch_list, batch_size)
         batch_sketches = [self.sketches_normed[idx] for idx in batch_idx]
-        batch_sketches_graphs = [self.sketches[idx] for idx in batch_idx]
         sketches = []
         lengths = []
         graphs = []  # (batch_size * graphs_num_constant, x, y)
@@ -141,14 +138,14 @@ class SketchesDataset:
             adjs.append(tmp_adj)
             labels.append(i // 70000)
 
-        batch = torch.from_numpy(np.stack(sketches, 1)).float()  # (Nmax, batch_size, 5)
+        batch = torch.from_numpy(np.stack(sketches, 1)).float()
         graphs = torch.from_numpy(np.stack(graphs, 0)).float()
         adjs = torch.from_numpy(np.stack(adjs, 0)).float()
         labels = torch.from_numpy(np.stack(labels, 0)).long()
 
         if hp.use_cuda:
-            batch = batch.cuda()  # (Nmax, batch_size, 5)
-            graphs = graphs.cuda()  # (batch_size, len, 5)
+            batch = batch.cuda()
+            graphs = graphs.cuda()
             adjs = adjs.cuda()
             labels = labels.cuda()
 
@@ -160,14 +157,6 @@ def make_coordinate_graph(sketch: np.ndarray, mask_prob: float):
     result_points, A = get_node_coordinates_graph(canvas, 8, 8,
                                                   maxPointFilled=hp.graph_number,
                                                   mask_prob=mask_prob, max_pixel_value=hp.words_number - 1)
-    # import cv2
-    # result_points = result_points.astype("int16")
-    # for p in result_points:
-    #     if p[0] == p[1] == 0:
-    #         continue
-    #     cv2.line(canvas, tuple(p), tuple(p), color=(0, 255, 0), thickness=5)
-    # cv2.imwrite("test.jpg", canvas)
-    # exit(0)
     return result_points, A
 
 
@@ -233,17 +222,12 @@ class Model:
         if hp.use_cuda:
             self.encoder: nn.Module = EncoderGCN().cuda()
             self.decoder: nn.Module = DecoderRNN().cuda()
-            # self.classifier: nn.Module = Classifier().cuda()
         else:
             self.encoder: nn.Module = EncoderGCN()
             self.decoder: nn.Module = DecoderRNN()
-            # self.classifier: nn.Module = Classifier()
         self.encoder_optimizer = optim.Adam(self.encoder.parameters(), hp.lr)
         self.decoder_optimizer = optim.Adam(self.decoder.parameters(), hp.lr)
-        # self.classifier_optimizer = optim.Adam(self.classifier.parameters(), hp.lr)
         self.eta_step = hp.eta_min
-
-        # self.CLoss = nn.CrossEntropyLoss()
 
     def lr_decay(self, optimizer: optim, epoch: int):
         """Decay learning rate by a factor of lr_decay"""
@@ -260,48 +244,43 @@ class Model:
         """
         if hp.use_cuda:
             eos = torch.stack([torch.Tensor([0, 0, 0, 0, 1])] * batch.size()[1]).cuda().unsqueeze(
-                0)  # torch.Size([1, 100, 5])
+                0)
         else:
             eos = torch.stack([torch.Tensor([0, 0, 0, 0, 1])] * batch.size()[1]).unsqueeze(0)  # max of len(strokes)
 
         batch = torch.cat([batch, eos], 0)
         mask = torch.zeros(hp.Nmax + 1, batch.size()[1])
-        for indice, length in enumerate(lengths):  # len(lengths) = batchsize
+        for indice, length in enumerate(lengths):
             mask[:length, indice] = 1
         if hp.use_cuda:
             mask = mask.cuda()
-        dx = torch.stack([batch.data[:, :, 0]] * hp.M, 2)  # torch.Size([130, 100, 20])
-        dy = torch.stack([batch.data[:, :, 1]] * hp.M, 2)  # torch.Size([130, 100, 20])
-        p1 = batch.data[:, :, 2]  # torch.Size([130, 100])
+        dx = torch.stack([batch.data[:, :, 0]] * hp.M, 2)
+        dy = torch.stack([batch.data[:, :, 1]] * hp.M, 2)
+        p1 = batch.data[:, :, 2]
         p2 = batch.data[:, :, 3]
         p3 = batch.data[:, :, 4]
-        p = torch.stack([p1, p2, p3], 2)  # torch.Size([130, 100, 3])
+        p = torch.stack([p1, p2, p3], 2)
         return mask, dx, dy, p
 
     def train(self, epoch):
         self.encoder.train()
         self.decoder.train()
         batch, lengths, graphs, adjs, labels = sketch_dataset.make_batch(hp.batch_size)
-        # print(batch, lengths)
 
         # encode:
-        # z, self.mu, self.sigma = self.encoder(batch, hp.batch_size)  # in here, Z is sampled from N(mu, sigma)
         z, self.mu, self.sigma, x = self.encoder(graphs, adjs)  # in here, Z is sampled from N(mu, sigma)
-        # torch.Size([100, 128]) torch.Size([100, 128]) torch.Size([100, 128])
-        # print(z.shape, self.mu.shape, self.sigma.shape)
 
         # create start of sequence:
         if hp.use_cuda:
             sos = torch.stack([torch.Tensor([0, 0, 1, 0, 0])] * hp.batch_size).cuda().unsqueeze(0)
-            # torch.Size([1, 100, 5])
         else:
             sos = torch.stack([torch.Tensor([0, 0, 1, 0, 0])] * hp.batch_size).unsqueeze(0)
         # had sos at the begining of the batch:
-        batch_init = torch.cat([sos, batch], 0)  # torch.Size([130, 100, 5])
+        batch_init = torch.cat([sos, batch], 0)
         # expend z to be ready to concatenate with inputs:
-        z_stack = torch.stack([z] * (hp.Nmax + 1))  # torch.Size([130, 100, 128])
+        z_stack = torch.stack([z] * (hp.Nmax + 1))
         # inputs is concatenation of z and batch_inputs
-        inputs = torch.cat([batch_init, z_stack], 2)  # torch.Size([130, 100, 133])
+        inputs = torch.cat([batch_init, z_stack], 2)
 
         # decode:
         self.pi, self.mu_x, self.mu_y, self.sigma_x, self.sigma_y, self.rho_xy, self.q, _, _ = self.decoder(inputs, z)
@@ -309,37 +288,28 @@ class Model:
         # prepare targets:
         mask, dx, dy, p = self.make_target(batch, lengths)
 
-        # output_x = self.classifier(x)
-
         # prepare optimizers:
         self.encoder_optimizer.zero_grad()
         self.decoder_optimizer.zero_grad()
-        # self.classifier_optimizer.zero_grad()
+
         # update eta for LKL:
-        self.eta_step = 1 - (1 - hp.eta_min) * (hp.R ** epoch)  # self.eta_step = 1 - (1 - hp.eta_min) * hp.R
+        self.eta_step = 1 - (1 - hp.eta_min) * (hp.R ** epoch)
         # compute losses:
-        # LKL = self.kullback_leibler_loss()
         LR = self.reconstruction_loss(mask, dx, dy, p, epoch)
-        # LC_x = self.CLoss(output_x, labels)
-        # loss = LR + LKL
         loss = LR
         # gradient step
         loss.backward()  # all torch.Tensor has backward.
         # gradient cliping
         nn.utils.clip_grad_norm_(self.encoder.parameters(), hp.grad_clip_encode)
         nn.utils.clip_grad_norm_(self.decoder.parameters(), hp.grad_clip)
-        # nn.utils.clip_grad_norm_(self.classifier.parameters(), hp.grad_clip)
         # optim step
         self.encoder_optimizer.step()
         self.decoder_optimizer.step()
-        # self.classifier_optimizer.step()
         # some print and save:
         if epoch % 2500 == 0:
-            # print('epoch', epoch, 'loss', loss.item(), 'LR', LR.item(), 'LKL', LKL.item())
             print(f'gcn {hp.save_path},epoch:', epoch, 'loss', loss.item(), 'LR', LR.item(), )
             self.encoder_optimizer = self.lr_decay(self.encoder_optimizer, epoch)  # modify optimizer after one step.
             self.decoder_optimizer = self.lr_decay(self.decoder_optimizer, epoch)
-            # self.classifier_optimizer = self.lr_decay(self.classifier_optimizer, epoch)
         if epoch == 0:
             return
         if epoch % 5000 == 0:
@@ -357,7 +327,7 @@ class Model:
         return exp / norm
 
     def reconstruction_loss(self, mask, dx, dy, p, epoch):
-        pdf = self.bivariate_normal_pdf(dx, dy)  # torch.Size([130, 100, 20])
+        pdf = self.bivariate_normal_pdf(dx, dy)
         # stroke
         LS = -torch.sum(mask * torch.log(1e-3 + torch.sum(self.pi * pdf, 2))) / float((hp.Nmax + 1) * hp.batch_size)
         # position
@@ -379,8 +349,6 @@ class Model:
                    f'./{hp.save_path}/encoderRNN_epoch_{epoch}.pth')
         torch.save(self.decoder.state_dict(), \
                    f'./{hp.save_path}/decoderRNN_epoch_{epoch}.pth')
-        # torch.save(self.classifier.state_dict(), \
-        #            f'./{hp.save_path}/classifier_epoch_{epoch}.pth')
 
     def load(self, encoder_name, decoder_name):
         saved_encoder = torch.load(encoder_name)
@@ -517,7 +485,6 @@ if __name__ == "__main__":
     print(get_parameter_number(model.encoder))
     print(get_parameter_number(model.decoder))
     # exit(0)
-    # init_weights(model.classifier)
     print(hp.Nmax)
     print(hp.category)
     print(hp.save_path)
@@ -533,7 +500,3 @@ if __name__ == "__main__":
     for epoch in tqdm(list(range(500001))):
         epoch += hp.reload_index
         model.train(epoch)
-    '''
-    model.load('encoder.pth','decoder.pth')
-    model.conditional_generation(0)
-    '''

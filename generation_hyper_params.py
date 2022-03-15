@@ -4,13 +4,19 @@ import torch
 class HParams:
     def __init__(self):
         self.reload_index = 0
+        # self.resume_epoch = 60000
 
         self.data_location = "./dataset_32_150"
         self.save_path = "./models_32_150"
         self.category = [
-            "airplane.npz",
-            # "angel.npz",
-        ]
+            "airplane.npz", "angel.npz", "apple.npz", "butterfly.npz", "bus.npz",
+            "cake.npz", "fish.npz", "spider.npz", "The Great Wall of China.npz", "umbrella.npz"
+        ]   # 10
+
+        # self.row_column, self.graph_number = [int(x) for x in self.data_location.replace("/", "").split("_")[-2:]]
+        self.graph_number = 150
+        self.row_column = 32
+        self.mask_prob = 0.10
 
         self.enc_hidden_size = 256  # encoder LSTM h size
         self.dec_hidden_size = 512
@@ -22,7 +28,7 @@ class HParams:
         self.R = 0.99995
         self.KL_min = 0.2
         self.wKL = 0.5
-        self.lr = 0.0003
+        self.lr = 0.001
         self.lr_decay = 0.99999
         self.min_lr = 0.00003
 
@@ -35,12 +41,7 @@ class HParams:
 
         self.Nmax = 0
         self.embedding_dim = 128
-        self.mask_prob = 0.10
         self.gcn_out_dim = 128
-
-        # self.row_column, self.graph_number = [int(x) for x in self.data_location.replace("/", "").split("_")[-2:]]
-        self.graph_number = 150
-        self.row_column = 32
 
         self.words_number = 256
         self.picture_size = self.words_number
@@ -48,6 +49,5 @@ class HParams:
         self.same_category_in_batch = False
 
         self.use_cuda = torch.cuda.is_available()
-
 
 hp = HParams()
