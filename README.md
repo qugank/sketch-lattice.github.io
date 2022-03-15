@@ -14,7 +14,10 @@ After downloads, please unzip the file and place in `./dataset` directory.
 
 ## sketch to Graph and Adj
 
-Before training and testing, you should run ```python -u sketch2GraphAndAdjScript.py```` for preprocessing datasets.
+Before training and testing, you should run for preprocessing datasets.
+  ```
+  python -u sketch2GraphAndAdjScript.py
+  ```
   
 * Before running the script, you should edit `outPath`, `split_nums`, `node_nums` and `mode(train/test)`.
   
@@ -26,7 +29,10 @@ Before training and testing, you should run ```python -u sketch2GraphAndAdjScrip
 
 1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
 
-2. running ```python -u generation_sketch_gcn.py``` for training.
+2. For training, run
+  ```
+  python -u generation_sketch_gcn.py
+  ``` 
 
 ## testing
 
@@ -34,7 +40,10 @@ The pre-trained models(encoder & decoder) and the corresponding parameters are a
   
 1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
   
-2. running ```python -u generation_inference.py``` for validating.
+2. For validating, run
+  ```
+  python -u generation_inference.py
+  ``` 
   
 ## Bibtex: 
 If you have some inspirations for your work, we would appreciate your quoting our paper.
