@@ -5,7 +5,7 @@ SketchLattice @ICCV21
 
 This is the official implementation (PyTorch) of SketchLattice: Latticed Representation for Sketch Manipulation https://arxiv.org/abs/2108.11636
 
-<img src="./docs/front.png" width="1000px"></img>
+<img src="./docs/front.png" width="800px"></img>
 
 ## Install
 
