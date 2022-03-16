@@ -28,7 +28,7 @@ To get started, a preprocess step needs to be done firstly by using the script `
   * `node_nums`:
   * `mode(train/test)`:
   
-* After running the script, you will see `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
+* After running the script, you will get `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
 
 ## Training and Testing
   
