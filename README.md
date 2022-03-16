@@ -11,18 +11,22 @@ This is the official implementation (PyTorch) of SketchLattice: Latticed Represe
 
 ### Datasets
   
-We used the <a href="https://github.com/googlecreativelab/quickdraw-dataset#sketch-rnn-quickdraw-dataset" target="_blank">QuickDraw Dataset<a> for sketch reconstruction. Specifically, 10 categories used in SketchLattice can be dowanloaded as per-class `.npz` files from <a href="https://drive.google.com/file/d/1spj0eHU8HPtp1ET-3FVjWsja2G8F8CSF/view?usp=sharing" target="_blank">Google Cloud<a>.
+There are 10 categories randomly selected from the <a href="https://github.com/googlecreativelab/quickdraw-dataset#sketch-rnn-quickdraw-dataset" target="_blank">QuickDraw Dataset<a> for all experiments. You can dowanload the data (one `.npz` file per class) from <a href="https://drive.google.com/file/d/1spj0eHU8HPtp1ET-3FVjWsja2G8F8CSF/view?usp=sharing" target="_blank">Google Cloud<a>.
 
-After downloads, please unzip and place the origin files in `./dataset` directory.
+After downloading, please unzip and place all the npz files into the `./dataset` directory.
 
 ### Sketch to Graph and Adj
 
-Before training and testing, you must preprocess the datasets.
+To get started, a preprocess step needs to be done firstly by using the script `sketch2GraphAndAdjScript.py`. You can simply run the following command.
   ```python
     python -u sketch2GraphAndAdjScript.py
   ```
   
-* Before running the script, you should edit `outPath`, `split_nums`, `node_nums` and `mode(train/test)`.
+* Before running the script, you should edit the following haperparameters:
+  * `outPath`: 
+  * `split_nums`: 
+  * `node_nums`:
+  * `mode(train/test)`:
   
 * After running the script, you will see `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
 
