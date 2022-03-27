@@ -23,10 +23,10 @@ To get started, a preprocess step needs to be done firstly by using the script `
   ```
   
 * Before running the script, you should edit the following haperparameters:
-  * `outPath`: 
-  * `split_nums`: 
-  * `node_nums`:
-  * `mode(train/test)`:
+  * `outPath`: Path to place the preprocessed datasets.
+  * `split_nums`: Sampling density or Grid n, the default value is 32.
+  * `node_nums`: Graph Nodes v, the default value is 150.
+  * `mode(train/test)`: Preprocess on the train/test datasets.
   
 * After running the script, you will get `*_adjs_train(test).npz` and `*_nodes_train(test).npz` for training(testing) in the output directory.
 
@@ -42,7 +42,13 @@ Setup environment via requirements.txt
   
 ### Train
 
-1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
+1. Before running the script, you should edit `generation_hyper_params.py` to modify the following haperparameters if you need:
+  * `self.data_location`: Path to place the datasets.
+  * `self.save_path`: Path to place checkpoints and results.
+  * `self.category`: Categories you choose to train or validate.
+  * `self.row_column`: Sampling density or Grid n, the default value is 32.
+  * `self.graph_number`: Graph Nodes v, the default value is 150.
+  * `self.mask_prob`: Corruption levels p, the default value is 0.1.
 
 2. For training, run
   ```python
@@ -53,8 +59,8 @@ Setup environment via requirements.txt
 
 The pre-trained models(encoder & decoder) and the corresponding parameters are available in `./models_32_150`.
   
-1. edit `generation_hyper_params.py`, setting `self.data_location`, `self.save_path`,`self.category` and other parameters if you need.
-  
+1. Before running the script, you should edit `generation_hyper_params.py` to modify the following haperparameters if you need.
+
 2. For validating, run
   ```python
     python -u generation_inference.py
