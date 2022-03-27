@@ -43,7 +43,7 @@ Setup environment via requirements.txt
 ### Train
 
 1. Before running the script, you should edit `generation_hyper_params.py` to modify the following haperparameters if you need:
-  * `self.data_location`: Path to place the datasets.
+  * `self.data_location`: Path to place the preprocessed datasets.
   * `self.save_path`: Path to place checkpoints and results.
   * `self.category`: Categories you choose to train or validate.
   * `self.row_column`: Sampling density or Grid n, the default value is 32.
