@@ -43,12 +43,12 @@ Setup environment via requirements.txt
 ### Train
 
 1. Before running the script, you should edit `generation_hyper_params.py` to modify the following haperparameters if you need:
-  * `self.data_location`: Path to place the datasets.
-  * `self.save_path`: Path to place checkpoints and results.
-  * `self.category`: Categories you choose to train or validate.
-  * `self.row_column`: Sampling density or Grid n, the default value is 32.
-  * `self.graph_number`: Graph Nodes v, the default value is 150.
-  * `self.mask_prob`: Corruption levels p, the default value is 0.1.
+  ** `self.data_location`: Path to place the datasets.
+  ** `self.save_path`: Path to place checkpoints and results.
+  ** `self.category`: Categories you choose to train or validate.
+  ** `self.row_column`: Sampling density or Grid n, the default value is 32.
+  ** `self.graph_number`: Graph Nodes v, the default value is 150.
+  ** `self.mask_prob`: Corruption levels p, the default value is 0.1.
 
 2. For training, run
   ```python
@@ -59,7 +59,7 @@ Setup environment via requirements.txt
 
 The pre-trained models(encoder & decoder) and the corresponding parameters are available in `./models_32_150`.
   
-1. Before running the script, you should edit `generation_hyper_params.py` to modify the following haperparameters if you need.
+1. Before running the script, you should edit `generation_hyper_params.py` to modify the haperparameters as well.
 
 2. For validating, run
   ```python
