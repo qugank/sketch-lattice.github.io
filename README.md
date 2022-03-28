@@ -57,9 +57,9 @@ Setup environment via requirements.txt
 
 ### Test (Reconstruct Sketches)
 
-The pre-trained models(encoder & decoder) and the corresponding parameters are available in `./models_32_150`.
+Trained models (encoder & decoder) are available in `./models_32_150`.
   
-1. Before running the script, you should edit `generation_hyper_params.py` to modify the haperparameters as well.
+1. Before running the testing script, you should edit `generation_hyper_params.py` to modify the haperparameters as well.
 
 2. For validating, run
   ```python
@@ -67,7 +67,7 @@ The pre-trained models(encoder & decoder) and the corresponding parameters are a
   ``` 
   
 ## Bibtex: 
-If you have some inspirations for your work, we would appreciate your quoting our paper.
+Thank you for citing our work if it is helpful!
 
     @inproceedings{yonggang2021sketchlattice,
         title={SketchLattice: Latticed Representation for Sketch Manipulation},
